@@ -10,7 +10,7 @@ async function main() {
   });
 
   app.get("/", (req, res) => {
-    res.send(usuarios);
+    res.json(usuarios);
   });
 
   const user_list = await clerk.users.getUserList();
