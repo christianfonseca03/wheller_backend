@@ -6,22 +6,32 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 
-async function main() {
-  const user_list = await clerk.users.getUserList();
+async function startServer() {
+  try {
+    await clerk.init({
+      apiKey: process.env.CLERK_API_KEY,
+    });
 
-  const usuarios = user_list.map((user) => {
-    return user;
-  });
-  
-  app.get("/", (req, res) => {
-    res.json(usuarios);
-  });
+    app.get("/", async (req, res) => {
+      try {
+        const user_list = await clerk.users.getUserList();
+        const usuarios = user_list.map((user) => {
+          return user;
+        });
+        res.json(usuarios);
+      } catch (error) {
+        console.error("Erro ao buscar usuários:", error);
+        res.status(500).json({ error: "Erro ao buscar usuários" });
+      }
+    });
 
-  app.listen(3001, () => {
-    console.log("Servidor rodando na porta 3001");
-  });
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
+    });
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 }
 
-main().catch((error) => {
-  console.error("An error occurred:", error);
-});
+startServer();
