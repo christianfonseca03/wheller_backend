@@ -1,37 +1,28 @@
 import express from "express";
-import {Clerk} from "@clerk/clerk-sdk-node";
+import clerk from "@clerk/clerk-sdk-node";
 import "dotenv/config";
 import cors from "cors";
 
 const app = express();
 app.use(cors());
 
-async function startServer() {
-  try {
-    const clerkInstance = new Clerk({
-      apiKey: process.env.CLERK_API_KEY,
-    });
+async function main() {
+  const user_list = await clerk.users.getUserList();
 
-    app.get("/", async (req, res) => {
-      try {
-        const user_list = await clerkInstance.users.getUserList();
-        const usuarios = user_list.map((user) => {
-          return user;
-        });
-        res.json(usuarios);
-      } catch (error) {
-        console.error("Erro ao buscar usuários:", error);
-        res.status(500).json({ error: "Erro ao buscar usuários" });
-      }
-    });
+  const usuarios = user_list.map((user) => {
+    //console.log(user) funciona
+    return user;
+  });
+  
+  app.get("https://wheller-backend.vercel.app/", (req, res) => {
+    res.json(usuarios);
+  });
 
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log(`Servidor rodando na porta ${port}`);
-    });
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
+  app.listen(3001, () => {
+    console.log("Servidor rodando na porta 3001");
+  });
 }
 
-startServer();
+main().catch((error) => {
+  console.error("An error occurred:", error);
+});
