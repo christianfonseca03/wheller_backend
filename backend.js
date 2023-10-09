@@ -1,5 +1,5 @@
 import express from "express";
-import clerk from "@clerk/clerk-sdk-node";
+import {Clerk} from "@clerk/clerk-sdk-node";
 import "dotenv/config";
 import cors from "cors";
 
@@ -8,13 +8,13 @@ app.use(cors());
 
 async function startServer() {
   try {
-    await clerk.init({
+    const clerkInstance = new Clerk({
       apiKey: process.env.CLERK_API_KEY,
     });
 
     app.get("/", async (req, res) => {
       try {
-        const user_list = await clerk.users.getUserList();
+        const user_list = await clerkInstance.users.getUserList();
         const usuarios = user_list.map((user) => {
           return user;
         });
