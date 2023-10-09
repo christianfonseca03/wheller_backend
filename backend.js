@@ -1,8 +1,10 @@
 import express from "express";
 import clerk from "@clerk/clerk-sdk-node";
 import "dotenv/config";
+import cors from "cors"
 
 const app = express();
+app.use(cors())
 
 async function main() {
   app.listen(3001, () => {
